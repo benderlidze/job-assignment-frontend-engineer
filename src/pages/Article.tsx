@@ -3,22 +3,22 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Article } from "../types/Arcticle";
 import { UserImage } from "components/UserAvatar";
+import { FavoritePostButton } from "components/FavoritePostButton";
 
 function ArticlePage(): JSX.Element {
   const { slug } = useParams<{ slug: string }>();
   const [article, setArticle] = useState<Article>();
 
-  const fetchArticle = async () => {
-    const apiEndpoint = process.env.REACT_APP_API_URL + `/articles/${slug}`;
-    const response = await fetch(apiEndpoint);
-    const data = await response.json();
-    if (data.message && data.message === "Not Found") {
-    }
-    setArticle(data.article);
-    //error handling
-  };
-
   useEffect(() => {
+    const fetchArticle = async () => {
+      const apiEndpoint = process.env.REACT_APP_API_URL + `/articles/${slug}`;
+      const response = await fetch(apiEndpoint);
+      const data = await response.json();
+      if (data.message && data.message === "Not Found") {
+      }
+      setArticle(data.article);
+    };
+
     if (slug) {
       fetchArticle();
     }
@@ -30,7 +30,7 @@ function ArticlePage(): JSX.Element {
     return <div>Loading...</div>;
   }
 
-  const { author, title, description, body, tagList, createdAt, updatedAt } = article;
+  const { author, title, favoritesCount, body, favorited, createdAt, updatedAt } = article;
   const date = new Date(createdAt).toDateString();
 
   return (
@@ -54,10 +54,7 @@ function ArticlePage(): JSX.Element {
                   &nbsp; Follow {author.username} <span className="counter">(10)</span>
                 </button>
                 &nbsp;&nbsp;
-                <button className="btn btn-sm btn-outline-primary">
-                  <i className="ion-heart" />
-                  &nbsp; Favorite Post <span className="counter">(29)</span>
-                </button>
+                <FavoritePostButton postSlug={slug} favoritesCount={favoritesCount} favorited={favorited} />
               </div>
             </div>
           </div>
@@ -85,10 +82,6 @@ function ArticlePage(): JSX.Element {
                   &nbsp; Follow Eric Simons
                 </button>
                 &nbsp;
-                <button className="btn btn-sm btn-outline-primary">
-                  <i className="ion-heart" />
-                  &nbsp; Favorite Post <span className="counter">(29)</span>
-                </button>
               </div>
             </div>
 
