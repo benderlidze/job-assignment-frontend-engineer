@@ -1,4 +1,8 @@
+import { useAuth } from "hooks/useAuth";
+
 export default function ArticleList(): JSX.Element {
+  const { user } = useAuth();
+
   return (
     <nav className="navbar navbar-light">
       <div className="container">
@@ -24,16 +28,32 @@ export default function ArticleList(): JSX.Element {
               &nbsp;Settings
             </a>
           </li>
-          <li className="nav-item">
-            <a className="nav-link" href="/#/login">
-              Sign in
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" href="/#/register">
-              Sign up
-            </a>
-          </li>
+
+          {user ? (
+            <>
+              <li className="nav-item">
+                <span className="nav-link font-weight-bold">{user.username}</span>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link " href="/#/logout">
+                  Log out
+                </a>
+              </li>
+            </>
+          ) : (
+            <>
+              <li className="nav-item">
+                <a className="nav-link " href="/#/login">
+                  Sign in
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" href="/#/register">
+                  Sign up
+                </a>
+              </li>
+            </>
+          )}
         </ul>
       </div>
     </nav>

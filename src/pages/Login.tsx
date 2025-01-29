@@ -1,11 +1,14 @@
+import { useAuth } from "hooks/useAuth";
 import { MainLayout } from "layouts/MainLayout";
 import { useState } from "react";
 
 export default function LoginRegister() {
-  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState("");
 
   const [email, setEmail] = useState("alice@example.com");
   const [password, setPassword] = useState("I_<3-R0ber7");
+
+  const { user, login } = useAuth();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,14 +26,27 @@ export default function LoginRegister() {
         },
       }),
     })
-      .then(response => response.json())
-      .then(data => {
-        console.log("data", data);
-        if (data.errors) {
-          setIsError(true);
+      .then(response => {
+        if (!response.ok) {
+          if (response.status === 401) {
+            setError("Invalid credentials");
+          }
+          if (response.status === 422) {
+            setError("Unexpected error");
+          }
+          throw new Error("Login failed");
         }
+        return response.json();
+      })
+      .then(data => {
+        // Save user data to local storage and state
+        login(data.user);
+        // Redirect to home page
+        window.location.href = "/";
+      })
+      .catch(error => {
+        setError("Error logging in: " + error);
       });
-      
   };
 
   return (
@@ -40,15 +56,8 @@ export default function LoginRegister() {
           <div className="row">
             <div className="col-md-6 offset-md-3 col-xs-12">
               <h1 className="text-xs-center">Sign up</h1>
-              <p className="text-xs-center">
-                <a href="/">Have an account?</a>
-              </p>
 
-              {isError && (
-                <ul className="error-messages">
-                  <li>That email is already taken</li>
-                </ul>
-              )}
+              {error && <ul className="error-messages">{error}</ul>}
 
               <form onSubmit={handleSubmit}>
                 <fieldset className="form-group">
