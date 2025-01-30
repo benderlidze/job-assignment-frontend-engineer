@@ -15,6 +15,7 @@ export const FavoritePostButton = ({ size = "lg" }: FavoritePostButtonProps) => 
   const { slug, favoritesCount, favorited } = article as Article;
 
   if (!user || !article) return null;
+  if (user.username === article.author.username) return null;
 
   const favoriteButtonClick = async () => {
     try {

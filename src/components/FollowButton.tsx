@@ -20,11 +20,12 @@ export const FollowButton = () => {
 
   const {
     slug,
-
     author: { following, username },
   } = article as Article;
 
   if (!user || !article) return null;
+
+  if (user.username === article.author.username) return null;
 
   const handleFollowClick = async () => {
     try {
