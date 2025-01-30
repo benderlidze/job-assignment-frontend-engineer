@@ -1,24 +1,30 @@
-import { Article } from "types/Arcticle";
+import { Article } from "types/Article";
 import { FavoritePostButton } from "./FavoritePostButton";
 import { FollowButton } from "./FollowButton";
 import { UserImage } from "./UserAvatar";
+import { useArticle } from "providers/ArticleProvider";
 
-export const UserPanel = ({ article }: { article: Article }): JSX.Element => {
-  const { author, createdAt, slug, favoritesCount, favorited } = article;
+export const UserPanel = (): JSX.Element => {
+  const { article } = useArticle();
+  const {
+    author: { username, image },
+    createdAt,
+  } = article as Article;
   const date = new Date(createdAt).toDateString();
+
   return (
     <>
       <div className="article-meta">
-        <UserImage username={author.username} image={author.image} />
+        <UserImage username={username} image={image} />
         <div className="info">
           <a href="/#/profile/ericsimmons" className="author">
-            {author.username}
+            {username}
           </a>
           <span className="date">{date}</span>
         </div>
-        <FollowButton postSlug={slug} authorName={author.username} following={author.following} />
+        <FollowButton />
         &nbsp;&nbsp;
-        <FavoritePostButton postSlug={slug} favoritesCount={favoritesCount} favorited={favorited} />
+        <FavoritePostButton />
       </div>
     </>
   );

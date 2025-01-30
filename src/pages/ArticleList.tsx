@@ -4,7 +4,7 @@ import { Tabs } from "components/Tabs";
 import { Tags } from "components/Tags";
 import { MainLayout } from "layouts/MainLayout";
 import { useEffect, useState } from "react";
-import { Article } from "types/Arcticle";
+import { Article } from "types/Article";
 
 export function ArticleList(): JSX.Element {
   const [articles, setArticles] = useState<Article[]>([]);

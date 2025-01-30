@@ -1,11 +1,7 @@
-import { useAuth } from "hooks/useAuth";
+import { useArticle } from "providers/ArticleProvider";
+import { useAuth } from "providers/useAuth";
 import { useState } from "react";
-
-type FollowButtonProps = {
-  postSlug: string;
-  authorName: string;
-  following: boolean;
-};
+import { Article } from "types/Article";
 
 type ProfileResponse = {
   profile: {
@@ -17,18 +13,23 @@ type ProfileResponse = {
   errors?: Record<string, string[]>;
 };
 
-export const FollowButton = ({ postSlug, authorName, following: initialFollowing }: FollowButtonProps) => {
-  const [isFollowing, setIsFollowing] = useState(initialFollowing);
+export const FollowButton = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
+  const { article, setArticle } = useArticle();
 
-  if (!user) return null;
+  const {
+    slug,
+
+    author: { following, username },
+  } = article as Article;
+
+  if (!user || !article) return null;
 
   const handleFollowClick = async () => {
     try {
-      await toggleFollowStatus(postSlug, !isFollowing);
+      await toggleFollowStatus(slug, !following);
     } catch (error) {
-      // Handle error appropriately for your application
       console.error("Failed to toggle follow status:", error);
     }
   };
@@ -37,7 +38,7 @@ export const FollowButton = ({ postSlug, authorName, following: initialFollowing
     setIsLoading(true);
     try {
       const method = shouldFollow ? "POST" : "DELETE";
-      const apiEndpoint = `${process.env.REACT_APP_API_URL}/profiles/${authorName}/follow`;
+      const apiEndpoint = `${process.env.REACT_APP_API_URL}/profiles/${username}/follow`;
 
       const response = await fetch(apiEndpoint, {
         method,
@@ -49,14 +50,20 @@ export const FollowButton = ({ postSlug, authorName, following: initialFollowing
       });
       const data: ProfileResponse = await response.json();
 
-      await new Promise(resolve => setTimeout(resolve, 1000));//for testing purposes
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       if (data.errors) {
         throw new Error(Object.values(data.errors).flat().join(", "));
       }
 
       if (data.profile) {
-        setIsFollowing(data.profile.following);
+        setArticle({
+          ...article,
+          author: {
+            ...article.author,
+            following: data.profile.following,
+          },
+        });
       }
     } finally {
       setIsLoading(false);
@@ -65,7 +72,7 @@ export const FollowButton = ({ postSlug, authorName, following: initialFollowing
 
   return (
     <button
-      className={`btn btn-sm ${isFollowing ? "btn-secondary" : "btn-outline-secondary"}`}
+      className={`btn btn-sm ${following ? "btn-secondary" : "btn-outline-secondary"}`}
       onClick={handleFollowClick}
       disabled={isLoading}
     >
@@ -73,8 +80,8 @@ export const FollowButton = ({ postSlug, authorName, following: initialFollowing
         <span>Loading...</span>
       ) : (
         <>
-          <i className={`ion-${isFollowing ? "checkmark" : "plus"}-round`} />
-          &nbsp; {isFollowing ? "Following" : "Follow"} {authorName}
+          <i className={`ion-${following ? "checkmark" : "plus"}-round`} />
+          &nbsp; {following ? "Following" : "Follow"} {username}
         </>
       )}
     </button>

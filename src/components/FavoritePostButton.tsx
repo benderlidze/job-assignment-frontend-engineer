@@ -1,62 +1,71 @@
-import { useAuth } from "hooks/useAuth";
+import { useArticle } from "providers/ArticleProvider";
+import { useAuth } from "providers/useAuth";
 import { useState } from "react";
+import { Article } from "types/Article";
 
 type FavoritePostButtonProps = {
-  postSlug: string;
-  favoritesCount: number;
-  favorited: boolean;
   size?: "sm" | "lg";
 };
 
-export const FavoritePostButton = ({ postSlug, favoritesCount, favorited, size = "lg" }: FavoritePostButtonProps) => {
-  const [isFavorite, setIsFavorite] = useState(favorited);
+export const FavoritePostButton = ({ size = "lg" }: FavoritePostButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [favoritesCountState, setFavoritesCountState] = useState(favoritesCount);
-
   const { user } = useAuth();
-  if (!user) return null;
+  const { article, setArticle } = useArticle();
+
+  const { slug, favoritesCount, favorited } = article as Article;
+
+  if (!user || !article) return null;
 
   const favoriteButtonClick = async () => {
-    console.log("isFavorite", isFavorite);
-    setFavoriteState(postSlug, !isFavorite);
+    try {
+      await setFavoriteState(!favorited);
+    } catch (error) {
+      console.error("Failed to toggle favorite status:", error);
+    }
   };
 
-  const setFavoriteState = async (slug: string, isFavorite: boolean) => {
+  const setFavoriteState = async (shouldFavorite: boolean) => {
     setIsLoading(true);
-    const method = isFavorite ? "POST" : "DELETE";
-    const apiEndpoint = process.env.REACT_APP_API_URL + `/articles/${slug}/favorite`;
-    console.log("method", method);
+    try {
+      const method = shouldFavorite ? "POST" : "DELETE";
+      const apiEndpoint = `${process.env.REACT_APP_API_URL}/articles/${slug}/favorite`;
 
-    const response = await fetch(apiEndpoint, {
-      method: method,
-      headers: {
-        accept: "application/json",
-        Authorization: `Bearer ${user.token}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: "",
-    });
-    const data = await response.json();
-    if (data.errors) {
-      console.error(data.errors);
+      const response = await fetch(apiEndpoint, {
+        method,
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
+      const data = await response.json();
+
+      if (data.errors) {
+        throw new Error(Object.values(data.errors).flat().join(", "));
+      }
+
+      if (data.article) {
+        setArticle({
+          ...article,
+          favorited: data.article.favorited,
+          favoritesCount: data.article.favoritesCount,
+        });
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    } finally {
+      setIsLoading(false);
     }
-
-    console.log("data Favorite", data);
-    if (data.article) {
-      setIsFavorite(data.article.favorited);
-      setFavoritesCountState(data.article.favoritesCount);
-    }
-
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsLoading(false);
   };
 
   return (
     <button className="btn btn-sm btn-outline-primary" onClick={favoriteButtonClick} disabled={isLoading}>
-      {isLoading ? "Loading..." : isFavorite ? <i className="ion-heart" /> : ""}
-      {!isLoading && (
+      {isLoading ? (
+        "Loading..."
+      ) : (
         <>
-          &nbsp; {size === "sm" ? "" : "Favorite Post"} <span className="counter">({favoritesCountState})</span>
+          {favorited && <i className="ion-heart" />}
+          &nbsp; {size === "sm" ? "" : "Favorite Post"} <span className="counter">({favoritesCount})</span>
         </>
       )}
     </button>

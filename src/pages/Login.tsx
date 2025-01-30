@@ -1,4 +1,4 @@
-import { useAuth } from "hooks/useAuth";
+import { useAuth } from "providers/useAuth";
 import { MainLayout } from "layouts/MainLayout";
 import { useState } from "react";
 

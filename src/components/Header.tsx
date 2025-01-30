@@ -1,4 +1,4 @@
-import { useAuth } from "hooks/useAuth";
+import { useAuth } from "providers/useAuth";
 
 export default function ArticleList(): JSX.Element {
   const { user } = useAuth();

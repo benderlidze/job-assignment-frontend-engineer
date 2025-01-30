@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useAuth } from "hooks/useAuth";
+import { useAuth } from "providers/useAuth";
 import { MainLayout } from "layouts/MainLayout";
 
 export default function Logout() {

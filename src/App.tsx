@@ -8,7 +8,7 @@ import Login from "pages/Login";
 import Logout from "pages/Logout";
 import Profile from "pages/Profile";
 import Settings from "pages/Settings";
-import { AuthProvider } from "hooks/useAuth";
+import { AuthProvider } from "providers/useAuth";
 
 function App(): JSX.Element {
   return (

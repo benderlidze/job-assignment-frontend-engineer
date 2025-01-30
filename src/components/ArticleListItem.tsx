@@ -1,9 +1,9 @@
-import type { Article } from "types/Arcticle";
+import type { Article } from "types/Article";
 import { UserImage } from "./UserAvatar";
+import { FavoritePostButton } from "./FavoritePostButton";
+import { ArticleProvider } from "providers/ArticleProvider";
 
 export function ArticleListItem(article: Article): JSX.Element {
-  console.log("article111111", article);
-
   const {
     author: { username, image },
     title,
@@ -24,9 +24,11 @@ export function ArticleListItem(article: Article): JSX.Element {
           </a>
           <span className="date">{date}</span>
         </div>
-        <button className="btn btn-outline-primary btn-sm pull-xs-right">
-          <i className="ion-heart" /> 29
-        </button>
+        <div className=" pull-xs-right">
+          <ArticleProvider initialArticle={article}>
+            <FavoritePostButton size="sm" />
+          </ArticleProvider>
+        </div>
       </div>
       <a href={`/#/${slug}`} className="preview-link">
         <h1>{title}</h1>
