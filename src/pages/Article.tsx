@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { Article } from "../types/Arcticle";
 import { UserImage } from "components/UserAvatar";
 import { FavoritePostButton } from "components/FavoritePostButton";
+import { FollowButton } from "components/FollowButton";
 
 function ArticlePage(): JSX.Element {
   const { slug } = useParams<{ slug: string }>();
@@ -25,6 +26,14 @@ function ArticlePage(): JSX.Element {
   }, [slug]);
 
   console.log("article", article);
+
+  const formatText = (text: string): JSX.Element[] => {
+    return text.split(/\r?\n/).map((line, index) => (
+      <p key={index} style={{ textIndent: "2rem" }}>
+        {line}
+      </p>
+    ));
+  };
 
   if (!article) {
     return <div>Loading...</div>;
@@ -49,10 +58,7 @@ function ArticlePage(): JSX.Element {
                   </a>
                   <span className="date">{date}</span>
                 </div>
-                <button className="btn btn-sm btn-outline-secondary">
-                  <i className="ion-plus-round" />
-                  &nbsp; Follow {author.username} <span className="counter">(10)</span>
-                </button>
+                <FollowButton postSlug={slug} authorName={author.username} following={author.following} />
                 &nbsp;&nbsp;
                 <FavoritePostButton postSlug={slug} favoritesCount={favoritesCount} favorited={favorited} />
               </div>
@@ -61,7 +67,7 @@ function ArticlePage(): JSX.Element {
 
           <div className="container page">
             <div className="row article-content">
-              <div className="col-md-12">{body}</div>
+              <div className="col-md-12">{formatText(body)}</div>
             </div>
 
             <hr />

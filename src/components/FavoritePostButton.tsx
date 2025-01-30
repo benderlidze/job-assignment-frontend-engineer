@@ -1,6 +1,5 @@
 import { useAuth } from "hooks/useAuth";
 import { useState } from "react";
-import { Article } from "types/Arcticle";
 
 type FavoritePostButtonProps = {
   postSlug: string;
@@ -48,7 +47,6 @@ export const FavoritePostButton = ({ postSlug, favoritesCount, favorited }: Favo
     }
 
     await new Promise(resolve => setTimeout(resolve, 1000));
-
     setIsLoading(false);
   };
 
