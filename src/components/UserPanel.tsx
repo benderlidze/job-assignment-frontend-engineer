@@ -17,7 +17,7 @@ export const UserPanel = (): JSX.Element => {
       <div className="article-meta">
         <UserImage username={username} image={image} />
         <div className="info">
-          <a href="/#/profile/ericsimmons" className="author">
+          <a href={`/#/profile/${username}`} className="author">
             {username}
           </a>
           <span className="date">{date}</span>
