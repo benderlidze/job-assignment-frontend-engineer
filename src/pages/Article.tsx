@@ -2,9 +2,7 @@ import { MainLayout } from "layouts/MainLayout";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Article } from "../types/Arcticle";
-import { UserImage } from "components/UserAvatar";
-import { FavoritePostButton } from "components/FavoritePostButton";
-import { FollowButton } from "components/FollowButton";
+import { UserPanel } from "components/UserPanel";
 
 function ArticlePage(): JSX.Element {
   const { slug } = useParams<{ slug: string }>();
@@ -39,8 +37,7 @@ function ArticlePage(): JSX.Element {
     return <div>Loading...</div>;
   }
 
-  const { author, title, favoritesCount, body, favorited, createdAt, updatedAt } = article;
-  const date = new Date(createdAt).toDateString();
+  const { title, body } = article;
 
   return (
     <MainLayout>
@@ -49,46 +46,16 @@ function ArticlePage(): JSX.Element {
           <div className="banner">
             <div className="container">
               <h1>{title}</h1>
-
-              <div className="article-meta">
-                <UserImage username={author.username} image={author.image} />
-                <div className="info">
-                  <a href="/#/profile/ericsimmons" className="author">
-                    {author.username}
-                  </a>
-                  <span className="date">{date}</span>
-                </div>
-                <FollowButton postSlug={slug} authorName={author.username} following={author.following} />
-                &nbsp;&nbsp;
-                <FavoritePostButton postSlug={slug} favoritesCount={favoritesCount} favorited={favorited} />
-              </div>
+              <UserPanel article={article} />
             </div>
           </div>
-
           <div className="container page">
             <div className="row article-content">
               <div className="col-md-12">{formatText(body)}</div>
             </div>
-
             <hr />
-
             <div className="article-actions">
-              <div className="article-meta">
-                <a href="/#/profile/ericsimmons">
-                  <img src="http://i.imgur.com/Qr71crq.jpg" />
-                </a>
-                <div className="info">
-                  <a href="/#/profile/ericsimmons" className="author">
-                    Eric Simons
-                  </a>
-                  <span className="date">January 20th</span>
-                </div>
-                <button className="btn btn-sm btn-outline-secondary">
-                  <i className="ion-plus-round" />
-                  &nbsp; Follow Eric Simons
-                </button>
-                &nbsp;
-              </div>
+              <UserPanel article={article} />
             </div>
 
             <div className="row">

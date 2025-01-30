@@ -5,9 +5,10 @@ type FavoritePostButtonProps = {
   postSlug: string;
   favoritesCount: number;
   favorited: boolean;
+  size?: "sm" | "lg";
 };
 
-export const FavoritePostButton = ({ postSlug, favoritesCount, favorited }: FavoritePostButtonProps) => {
+export const FavoritePostButton = ({ postSlug, favoritesCount, favorited, size = "lg" }: FavoritePostButtonProps) => {
   const [isFavorite, setIsFavorite] = useState(favorited);
   const [isLoading, setIsLoading] = useState(false);
   const [favoritesCountState, setFavoritesCountState] = useState(favoritesCount);
@@ -55,7 +56,7 @@ export const FavoritePostButton = ({ postSlug, favoritesCount, favorited }: Favo
       {isLoading ? "Loading..." : isFavorite ? <i className="ion-heart" /> : ""}
       {!isLoading && (
         <>
-          &nbsp; Favorite Post <span className="counter">({favoritesCountState})</span>
+          &nbsp; {size === "sm" ? "" : "Favorite Post"} <span className="counter">({favoritesCountState})</span>
         </>
       )}
     </button>
