@@ -25,9 +25,9 @@ export function ArticleListItem(article: Article): JSX.Element {
           <span className="date">{date}</span>
         </div>
         <div className=" pull-xs-right">
-          <ArticleProvider initialArticle={article}>
+          {/* <ArticleProvider initialArticle={article}>
             <FavoritePostButton size="sm" />
-          </ArticleProvider>
+          </ArticleProvider> */}
         </div>
       </div>
       <a href={`/#/${slug}`} className="preview-link">

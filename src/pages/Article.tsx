@@ -46,7 +46,7 @@ function ArticlePage(): JSX.Element {
           <div className="banner">
             <div className="container">
               <h1>{title}</h1>
-              <UserPanel />
+              <UserPanel  />
             </div>
           </div>
           <div className="container page">

@@ -1,21 +1,34 @@
-import { useArticle } from "providers/ArticleProvider";
 import { useAuth } from "providers/useAuth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Article } from "types/Article";
 
 type FavoritePostButtonProps = {
+  slug: string;
+  favoritesCount: number;
+  favoriteStatus: boolean;
+  articleAuthorUsername: string;
   size?: "sm" | "lg";
+  setArticle?: React.Dispatch<React.SetStateAction<Article>>;
 };
 
-export const FavoritePostButton = ({ size = "lg" }: FavoritePostButtonProps) => {
+export const FavoritePostButton = ({
+  slug,
+  favoritesCount,
+  favoriteStatus,
+  articleAuthorUsername,
+  size = "lg",
+  setArticle,
+}: FavoritePostButtonProps) => {
+  const [favorited, setFavorited] = useState(favoriteStatus);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
-  const { article, setArticle } = useArticle();
 
-  const { slug, favoritesCount, favorited } = article as Article;
+  useEffect(() => {
+    setFavorited(favoriteStatus);
+  }, [favoriteStatus]);
 
-  if (!user || !article) return null;
-  if (user.username === article.author.username) return null;
+  if (!user) return null;
+  if (user.username === articleAuthorUsername) return null;
 
   const favoriteButtonClick = async () => {
     try {
@@ -46,11 +59,15 @@ export const FavoritePostButton = ({ size = "lg" }: FavoritePostButtonProps) => 
       }
 
       if (data.article) {
-        setArticle({
-          ...article,
-          favorited: data.article.favorited,
-          favoritesCount: data.article.favoritesCount,
-        });
+        setFavorited(data.article.favorited);
+
+        if (typeof setArticle === "function") {
+          setArticle((article: Article) => ({
+            ...article,
+            favorited: data.article.favorited,
+            favoritesCount: data.article.favoritesCount,
+          }));
+        }
       }
 
       await new Promise(resolve => setTimeout(resolve, 1000));

@@ -5,12 +5,17 @@ import { UserImage } from "./UserAvatar";
 import { useArticle } from "providers/ArticleProvider";
 
 export const UserPanel = (): JSX.Element => {
-  const { article } = useArticle();
+  const { article, setArticle } = useArticle();
   const {
-    author: { username, image },
+    author: { username, image, following },
     createdAt,
+    slug,
+    favoritesCount,
+    favorited,
   } = article as Article;
   const date = new Date(createdAt).toDateString();
+
+  if (!article) return <></>;
 
   return (
     <>
@@ -22,9 +27,15 @@ export const UserPanel = (): JSX.Element => {
           </a>
           <span className="date">{date}</span>
         </div>
-        <FollowButton />
+        <FollowButton followUserName={username} followingStatus={following} setArticle={setArticle} />
         &nbsp;&nbsp;
-        <FavoritePostButton />
+        <FavoritePostButton
+          slug={slug}
+          favoritesCount={favoritesCount}
+          favoriteStatus={favorited}
+          articleAuthorUsername={username}
+          setArticle={setArticle}
+        />
       </div>
     </>
   );
