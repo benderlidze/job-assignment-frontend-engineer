@@ -19,8 +19,6 @@ type FollowButtonProps = {
 };
 
 export const FollowButton = ({ followUserName, followingStatus, setArticle }: FollowButtonProps) => {
-  console.log("followingStatus", followingStatus);
-
   const [isLoading, setIsLoading] = useState(false);
   const [following, setFolowing] = useState(followingStatus);
   const { user } = useAuth();

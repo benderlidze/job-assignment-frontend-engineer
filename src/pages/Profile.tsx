@@ -50,6 +50,7 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
+          {profile && <FollowButton followUserName={profile?.username} followingStatus={profile?.following} />}
         </div>
 
         <div className="container">

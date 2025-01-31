@@ -1,7 +1,6 @@
 import type { Article } from "types/Article";
 import { UserImage } from "./UserAvatar";
 import { FavoritePostButton } from "./FavoritePostButton";
-import { ArticleProvider } from "providers/ArticleProvider";
 
 export function ArticleListItem(article: Article): JSX.Element {
   const {
@@ -25,9 +24,13 @@ export function ArticleListItem(article: Article): JSX.Element {
           <span className="date">{date}</span>
         </div>
         <div className=" pull-xs-right">
-          {/* <ArticleProvider initialArticle={article}>
-            <FavoritePostButton size="sm" />
-          </ArticleProvider> */}
+          <FavoritePostButton
+            slug={slug}
+            favoritesCount={article.favoritesCount}
+            favoriteStatus={article.favorited}
+            articleAuthorUsername={username}
+            size="sm"
+          />
         </div>
       </div>
       <a href={`/#/${slug}`} className="preview-link">
